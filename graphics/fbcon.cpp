@@ -15,11 +15,11 @@ static void set_primary_gpu(void (*const func)(const char&)){
 void Graphics::fbcon::init()
 {
     Debug::Logging::info("[graphics/fbcon]: choosing GPU helper...");
-    Providers::Graphics::GPU_provider_info *info_card = Providers::provide_gpu();
+    const Providers::Graphics::GPU_provider_info *info_card = Providers::provide_gpu();
     Debug::Logging::info(info_card->name);
-    set_primary_gpu(*info_card->func);
+    set_primary_gpu(info_card->write_func);
     if (draw_char_gpu_func != nullptr)
         switch_write_char_func();
-    //else
-    //    Debug::Logging::warn("[graphics/fbcon]: no active GPU was detected");
+    else
+        Debug::Logging::warn("[graphics/fbcon]: no active GPU was detected");
 }

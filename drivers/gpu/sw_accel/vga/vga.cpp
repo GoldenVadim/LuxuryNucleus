@@ -28,8 +28,6 @@ unsigned short *vga_text_buffer,
                *vga_text_scroll_buffer,
                attribute;
 char X = 0, Y = 0;
-extern void init();
-extern void put_char(const char &);
 
 static void put_entry(const unsigned short entry) 
 {
@@ -91,7 +89,7 @@ static void scroll()
     fill_with_zeros();
 }
 
-void put_char(const char &what)
+static void put_char(const char &what)
 {
     switch (what)
     {
@@ -114,7 +112,7 @@ void put_char(const char &what)
 	if (Y == vga_height) newline_at_end = true;
 }
 
-void init()
+static void init()
 {
     if (!inited)
     {
@@ -143,7 +141,4 @@ void init()
     }
 }
 
-void (*const init_ptr)() = init;
-void (*const pur_char_ptr)(const char &) = put_char;
-
-GPU_provider_import(VGA,&pur_char_ptr,&init_ptr,&inited)
+GPU_provider_import(VGA,put_char,init,&inited)

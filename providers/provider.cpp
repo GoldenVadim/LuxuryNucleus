@@ -2,17 +2,26 @@
 #include "graphics/provide.hpp"
 using namespace Providers;
 
-extern Graphics::GPU_provider_info providers_graphics_start[] asm("providers_graphics_start"),
-                                   providers_graphics_end[] asm("providers_graphics_end");
+extern const Graphics::GPU_provider_info providers_graphics_start[] asm("providers_graphics_start"),
+                                         providers_graphics_end[] asm("providers_graphics_end");
 
-Graphics::GPU_provider_info *Providers::provide_gpu()
+const Graphics::GPU_provider_info *Providers::provide_gpu()
 {
-    static Graphics::GPU_provider_info *ptr = nullptr;
-    for (ptr = providers_graphics_start;
-         ptr < providers_graphics_end; ptr++)
+    static const Graphics::GPU_provider_info *ptr = providers_graphics_start;
+    while (ptr < providers_graphics_end)
     {
-        (*ptr->init_func)();
-        break;
+        if (ptr)
+        {
+            if (ptr->name && ptr->init_func && ptr->write_func && ptr->inited)
+            {
+                if (!*ptr->inited)
+                {
+                    ptr->init_func();
+                    break;
+                }
+            }
+        }
     }
+    if (ptr == providers_graphics_end) ptr = providers_graphics_start;
     return ptr;
 }

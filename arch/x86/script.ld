@@ -3,12 +3,23 @@ SECTIONS {
     mmio_addr_alloc_kernel_start = 2M;
     . = mmio_addr_alloc_kernel_start;
 
+    .headers :
+    {
+        KEEP(*(.headers.multiboot2))
+    }
+
     .text :
     {
-        KEEP(*(.multiboot2))
         mmio_addr_alloc_text_start = ABSOLUTE(.);
         *(.text)
         mmio_addr_alloc_text_end = ABSOLUTE(.);
+    }
+
+    .bss :
+    {
+        mmio_addr_alloc_bss_start = ABSOLUTE(.);
+        *(.bss)
+        mmio_addr_alloc_bss_end = ABSOLUTE(.);
     }
 
     .rodata :
@@ -25,19 +36,15 @@ SECTIONS {
         mmio_addr_alloc_data_end = ABSOLUTE(.);
     }
 
-    .bss :
-    {
-        mmio_addr_alloc_bss_start = ABSOLUTE(.);
-        *(.bss)
-        mmio_addr_alloc_bss_end = ABSOLUTE(.);
-    }
-
-    .providers_graphics :
+    .providers :
     {
         providers_graphics_start = ABSOLUTE(.);
-        KEEP(*(.providers_graphics))
+        KEEP(*(.providers.graphics))
         providers_graphics_end = ABSOLUTE(.);
     }
+
+    t1 = .;
+    t2 = .;
 
     /DISCARD/ :
     {
