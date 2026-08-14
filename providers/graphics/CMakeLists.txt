@@ -1,0 +1,1 @@
+add_library(subsystem_providers_graphics OBJECT provider.cpp)

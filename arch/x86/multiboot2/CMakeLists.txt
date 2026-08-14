@@ -1,0 +1,2 @@
+add_library(arch_multiboot2 OBJECT os_image_format.S)
+target_link_libraries(lnucleus PRIVATE arch_multiboot2)

@@ -1,16 +1,15 @@
 #include <drivers/rtc/cmos.hpp>
 #include "delay.hpp"
-using namespace Miscellaneous;
+using namespace Library;
 
 void Utilities::delay(unsigned s)
 {
-    unsigned elapsed = 0, rtc_sec = Drivers::CMOS::get_second();
+    unsigned elapsed, rtc_sec = Drivers::CMOS::get_bcd_seconds();
 
-    while (elapsed != s)
+    for (elapsed = 0; elapsed != s; ++elapsed)
     {
-        while (rtc_sec == Drivers::CMOS::get_second())
+        while (rtc_sec == Drivers::CMOS::get_bcd_seconds())
         {}
-        rtc_sec = Drivers::CMOS::get_second();
-        elapsed++;
+        rtc_sec = Drivers::CMOS::get_bcd_seconds();
     }
 }

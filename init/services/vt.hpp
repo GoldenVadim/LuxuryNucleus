@@ -1,6 +1,6 @@
 namespace Graphics
 {
-    namespace fbcon
+    namespace VT
     {
         extern void init();
     }

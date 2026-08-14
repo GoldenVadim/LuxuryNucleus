@@ -1,2 +1,4 @@
-add_library(subsystem_providers OBJECT provider.cpp)
-target_link_libraries(lnucleus PRIVATE subsystem_providers)
+add_subdirectory(graphics)
+add_library(subsystem_providers_cpu OBJECT cpu.cpp)
+
+target_link_libraries(lnucleus PRIVATE subsystem_providers_graphics subsystem_providers_cpu)

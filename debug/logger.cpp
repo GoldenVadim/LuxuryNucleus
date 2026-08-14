@@ -1,77 +1,71 @@
-#include <library/str_int.hpp>
-#include <memory/alloc.hpp>
-#include <graphics/fbcon.hpp>
+#include <graphics/vt/textcon/textcon.hpp>
 #include <init/services/logger.hpp>
+#include <memory/alloc.hpp>
+#include <misc/str_int.hpp>
 #include "logging.hpp"
-using namespace Graphics::fbcon;
+#include "vt.hpp"
+using namespace Miscellaneous;
+using namespace Graphics;
 using namespace Debug;
 
 namespace LogPrefix
 {
-    constexpr static const char *const Info = "<*> ";
-    constexpr static const char *const Warn = "<!> ";
-    constexpr static const char *const Error  = "<E> ";
+    static constexpr const char *const Info = "<*> ",
+                                *const Warn = "<!> ",
+                                *const Error  = "<X> ";
 }
 
-void (*write_char)(const char&);
-char *buffer;
-constexpr unsigned buffer_size = 1001;
-unsigned buffer_len = 0;
+static char *buffer;
+static void (*write_str)(const char *const &prefix, const char *const &str, const unsigned long long &len);
+#define buffer_size 2000000
+static unsigned long long buffer_len = 0;
+bool Logging::inited = false;
 
-static void __write_char_buffer_only(const char &what)
+static void __write_str_buffer_only(const char *const &prefix, const char *const &str, const unsigned long long &len)
 {
-    buffer[buffer_len] = what;
-    buffer_len++;
+    if (buffer_len + len + 4 > buffer_size)
+        Memory::clean(buffer, buffer_len);
+    Memory::copy_to(buffer + buffer_len, prefix, 4);
+    buffer_len += 4;
+    Memory::copy_to(buffer + buffer_len, str, len);
+    buffer_len += len;
+    buffer[buffer_len] = '\n';
+    ++buffer_len;
 }
 
-static void __write_char_with_fbcon(const char &what)
+static void __write_str_with_textcon(const char *const &prefix, const char *const &str, const unsigned long long &len)
 {
-    __write_char_buffer_only(what);
-    draw_char_gpu_func(what);
+    __write_str_buffer_only(prefix, str, len);
+    VT::textcon::print(prefix, 4);
+    VT::textcon::print(str, len);
+    VT::textcon::put_char('\n');
 }
 
-static void write_str(const char *const &str)
+void Logging::info(const char *const &text)
 {
-    for (unsigned len = 0; str[len]; ++len)
-        write_char(str[len]);
+    write_str(LogPrefix::Info, text, Str_Int::length_of(text));
 }
 
-static void write_line(const char *const &str)
+void Logging::warn(const char *const &text)
 {
-    write_str(str);
-    write_char('\n');
+    write_str(LogPrefix::Warn, text, Str_Int::length_of(text));
 }
 
-void Logging::info(const char *const text)
+void Logging::err(const char *const &text)
 {
-    write_str(LogPrefix::Info);
-    write_line(text);
+    write_str(LogPrefix::Error, text, Str_Int::length_of(text));
 }
 
-void Logging::warn(const char *const text)
+void Logging::switch_to_vt()
 {
-    write_str(LogPrefix::Warn);
-    write_line(text);
-}
-
-void Logging::err(const char *const text)
-{
-    write_str(LogPrefix::Error);
-    write_line(text);
-}
-
-
-void Graphics::fbcon::switch_write_char_func()
-{
-    for (unsigned len = 0; len != buffer_len; ++len)
-        draw_char_gpu_func(buffer[len]);
-    write_char = __write_char_with_fbcon;
-    Logging::info("exported logs buffer to display");
+    write_str = __write_str_with_textcon;
+    VT::textcon::print(buffer,buffer_len);
 }
 
 void Logging::init()
 {
     buffer = Memory::allocate<char>(buffer_size);
-    write_char = __write_char_buffer_only;
-    info("[debug/logger]: Initialized buffer of 1001 bytes.");
+    write_str = __write_str_buffer_only;
+    inited = true;
+    info("[debug/logger]: initialized buffer of 2 MB");
 }

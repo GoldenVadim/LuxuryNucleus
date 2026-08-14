@@ -1,34 +1,34 @@
 #include "alloc.hpp"
 
 extern char mmio_addr_alloc_kernel_end[] asm("mmio_addr_alloc_kernel_end");
-char *index = mmio_addr_alloc_kernel_end;
 
-void *Memory::malloc(const unsigned long long &size)
+void* Memory::__malloc(const unsigned long long &size)
 {
+    char *ptr = nullptr;
     if (size > 1)
     {
+        ptr = mmio_addr_alloc_kernel_end;
         bool give_this; unsigned long long i;
         while (true)
         {
             give_this = true;
-            for (i = 0; i != size + 1; ++i)
+            for (i = 0; i != size; ++i)
             {
-                if (index[i]) // != zero
+                if (ptr[i]) // != zero
                     give_this = false;
                 else if (!give_this)
                     break;
             }
-            index += i;
+            ptr += i;
             if (give_this)
                 break;
         }
     }
-    return index;
+    return ptr;
 }
 
-void Memory::free(void *ptr, const unsigned long long &size)
+void Memory::__copy(char *const &dst, const char *const &src, const unsigned long long &size)
 {
-    char *str = static_cast<char *>(ptr);
-    for (unsigned long long i = 0; i != size; i++)
-        str[i] = 0;
+    for (unsigned long long _ = 0; _ != size; ++_)
+        dst[_] = src[_];    
 }

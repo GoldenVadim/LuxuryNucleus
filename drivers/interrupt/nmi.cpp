@@ -1,8 +1,8 @@
-#include <memory/io/port.hpp>
 #include <drivers/rtc/register.hpp>
+#include <memory/ports.hpp>
 #include "nmi.hpp"
-using namespace Memory::IO;
 using namespace Drivers;
+using namespace Memory;
 
 void Interrupt::NMI::enable()
 {

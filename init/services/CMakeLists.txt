@@ -1,2 +1,0 @@
-#add_library(init_services OBJECT starter.cpp)
-#target_link_libraries(lnucleus PRIVATE init_services)

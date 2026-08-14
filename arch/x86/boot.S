@@ -1,29 +1,28 @@
 .intel_syntax noprefix
 
 .section .bss
-.align 16
 stack_bottom:
+.align 16
 .skip 16384
 stack_top:
 
 
+.code32
 .section .text
-.global halt
+.global init_boot
 halt:
     cli
 1:  hlt
     jmp 1b
 
-.global init_boot
-.code32
 init_boot:
-    in al, 0x92
-    or al, 2
-    out 0x92, al
-#if __SIZEOF_POINTER__ == 4
-    mov esp, offset stack_top
-    call init_main
-#elif __SIZEOF_POINTER__ == 8
+    cmp eax, 0x36d76289
+    jne halt
 
-#endif
-    jmp halt
+    mov esp, offset stack_top
+    cmp esp, offset stack_top
+    jne halt
+
+    //call setup_paging
+    call setup_tables
+    jmp init_main

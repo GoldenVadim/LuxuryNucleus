@@ -10,12 +10,14 @@ void Architecture::x86::out(const unsigned short &port, const char &data)
     );
 }
 
-void Architecture::x86::in(const unsigned short &port, char &data)
+char Architecture::x86::in(const unsigned short &port)
 {
+    char data;
     asm volatile
     (
         "in al, dx"
         : "=a" (data)
         : "d" (port)
     );
+    return data;
 }

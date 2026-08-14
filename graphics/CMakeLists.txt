@@ -1,2 +1,1 @@
-add_library(graphics_fbcon OBJECT fbcon.cpp)
-target_link_libraries(lnucleus PRIVATE graphics_fbcon)
+add_subdirectory(vt)

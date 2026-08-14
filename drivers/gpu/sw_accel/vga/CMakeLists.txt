@@ -1,2 +1,2 @@
-add_library(drivers_gpu_sw_vga OBJECT vga.cpp)
-target_link_libraries(lnucleus PRIVATE drivers_gpu_sw_vga)
+add_library(driver_gpu_sw_vga OBJECT vga.cpp)
+target_link_libraries(lnucleus PRIVATE driver_gpu_sw_vga)

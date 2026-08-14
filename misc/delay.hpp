@@ -1,4 +1,4 @@
-namespace Miscellaneous
+namespace Library
 {
     namespace Utilities
     {

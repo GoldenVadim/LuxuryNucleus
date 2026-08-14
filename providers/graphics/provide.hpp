@@ -2,5 +2,8 @@
 
 namespace Providers
 {
-    const Graphics::GPU_provider_info *provide_gpu();
+    namespace Graphics
+    {
+        Graphics::GPU* gpu();
+    }
 }

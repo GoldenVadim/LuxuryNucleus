@@ -1,0 +1,2 @@
+add_library(graphics_vt_textcon OBJECT textcon.cpp)
+target_link_libraries(lnucleus PRIVATE graphics_vt_textcon)
