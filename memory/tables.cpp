@@ -1,20 +1,17 @@
-#include <memory/alloc.hpp>
-
 extern void setup_tables() asm("setup_tables");
 
-static unsigned long long GDT[8192], IDT[256];
-struct
+static struct
 {
     const unsigned short Size;
     unsigned long long Offset;
 } GDTR
 {
     .Size = 65535,
-    .Offset = reinterpret_cast<unsigned long long>(&GDT)
+    .Offset = 0
 }, IDTR
 {
     .Size = 255,
-    .Offset = reinterpret_cast<unsigned long long>(&IDT)
+    .Offset = 0
 };
 
 unsigned long long &gdt_addr = GDTR.Offset, &idt_addr = IDTR.Offset;

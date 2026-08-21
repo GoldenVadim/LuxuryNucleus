@@ -24,5 +24,5 @@ init_boot:
     jne halt
 
     //call setup_paging
-    call setup_tables
+    //call setup_tables
     jmp init_main
