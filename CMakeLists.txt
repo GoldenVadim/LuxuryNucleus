@@ -11,15 +11,18 @@ elseif(arch STREQUAL "x86")
     add_compile_options(-masm=intel -mno-red-zone)
 endif()
 
-set(arch_bit_capacity "" CACHE STRING "The target bit capacity of architecture.")
-if ( arch_bit_capacity STREQUAL "32" )
+set(arch_bit "" CACHE STRING "The target bit capacity of architecture.")
+if ( arch_bit STREQUAL "32" )
     add_compile_options(-m32)
     add_link_options(-m32)
-elseif ( arch_bit_capacity STREQUAL "64" )
+elseif ( arch_bit STREQUAL "16")
+    add_compile_options(-m16)
+    add_link_options(-m16)
+elseif ( arch_bit STREQUAL "64" )
     add_compile_options(-m64 -mcmodel=large)
     add_link_options(-m64 -mcmodel=large)
 else()
-    message(FATAL_ERROR "Please, choose the valid bit capacity of architecture (32 or 64 bit).")
+    message(FATAL_ERROR "Please, choose the valid bit capacity of architecture (16, 32 or 64 bit).")
 endif()
 
 set(cross "" CACHE STRING "The cross compiler prefix (without minus at the end).")
@@ -29,16 +32,19 @@ elseif ( CMAKE_CXX_COMPILER STREQUAL "clang++" )
     add_compile_options(--target=${cross})
 endif()
 
-add_compile_options(-Wall -Wextra  -ffreestanding -fomit-frame-pointer -fno-PIC -fno-pic -fno-exceptions -fno-rtti
--fno-signed-char -funsigned-char -Wno-char-subscripts
--fstack-protector -fstack-protector-strong -fstack-clash-protection)
-add_link_options(-ffreestanding -nostdlib -no-pie -z noexecstack -z -nostdlib)
+add_compile_options(-nostdlib -fno-PIC -fno-pic -fno-exceptions -fno-rtti
+                    -fno-signed-char -funsigned-char -Wno-char-subscripts
+                    -fstack-protector -fstack-protector-strong -fstack-clash-protection
+                    -Wall -Wextra)
+add_link_options(-nostdlib -no-pie -z noexecstack -z -nostdlib)
 include_directories("${CMAKE_SOURCE_DIR}")
 
 string(FIND "${CXXFLAGS}" "-Werror" POSITION)
 if ( "${POSITION}" EQUAL -1 )
     message(WARNING "LuxuryNucleus is in testing & development mode, not for production. Please, use -Werror option to make kernel stable.")
     set(CMAKE_BUILD_TYPE Debug)
+    add_compile_options(-g -Og)
+    add_link_options(-g -Og)
 else()
     set(CMAKE_BUILD_TYPE Release)
 endif()

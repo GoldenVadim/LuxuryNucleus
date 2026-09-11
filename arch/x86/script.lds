@@ -9,7 +9,7 @@ PHDRS
 
 SECTIONS
 {
-    mmio_addr_alloc_kernel_start = 1M;
+    mmio_addr_alloc_kernel_start = 2M;
     . = mmio_addr_alloc_kernel_start;
 
     .text :

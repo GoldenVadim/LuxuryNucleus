@@ -1,1 +1,0 @@
-extern unsigned long long &gdt_addr, &idt_addr;

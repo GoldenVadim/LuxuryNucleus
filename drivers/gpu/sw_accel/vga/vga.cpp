@@ -83,7 +83,7 @@ static void __attribute__((used)) init()
 {
     if (!inited)
     {
-        Debug::Logging::info("[gpu/vga]: initializing VGA text fb...");
+        Debug::Logging::info("[gpu/vga]: initializing VGA text framebuffer...");
         BDA::vga_display_type type = BDA::get_vga_display_type();
         switch (type)
         {
@@ -119,7 +119,7 @@ static void __attribute__((used)) init()
 static const Providers::Graphics::Framebuffer fbs[]
 {
     {
-        .name = "IBM PC-compatible legacy BIOS VGA text colour framebuffer",
+        .name = "IBM PC-compatible BIOS VGA text framebuffer",
         .type_text = true,
         .type_colour = true,
         .max_width = 80,

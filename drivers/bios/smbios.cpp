@@ -30,7 +30,7 @@ static bool check_eps()
             if (chksum(EPS[5])) break;
         EPS += 16;
     }
-    if (reinterpret_cast<unsigned>(EPS) == 0x100000)
+    if (reinterpret_cast<unsigned long long>(EPS) == 0x100000)
         return false;
     else
         return true;
